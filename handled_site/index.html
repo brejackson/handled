@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>handled. — AI for the rest of us</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..600,0..100&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#F7F1EC;
+    --ivory-deep:#EFE5DB;
+    --green:#2F4731;
+    --green-deep:#22351F;
+    --berry:#7B2D5E;
+    --berry-deep:#5A2150;
+    --berry-bright:#9A3A75;
+    --papaya:#BD6809;
+    --papaya-deep:#8F4E06;
+    --rose:#C77E8E;
+    --rose-deep:#A85F70;
+    --oxblood:#3D1419;
+    --ink:#34232A;
+    --ink-soft:#6B5C63;
+    --line:rgba(52,35,42,.13);
+    --shadow:rgba(52,35,42,.13);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ivory);color:var(--ink);
+    font-family:'Hanken Grotesk',sans-serif;font-size:18px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  .display{font-family:'Fraunces',serif;}
+    font-family:'Fraunces',serif;font-variation-settings:"SOFT" 40;
+  }
+  ::selection{background:var(--berry);color:var(--ivory);}
+
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;padding:20px 32px;
+    background:rgba(247,241,236,.82);backdrop-filter:blur(12px);
+    border-bottom:1px solid transparent;transition:border-color .3s,padding .3s;
+  }
+  nav.scrolled{border-bottom-color:var(--line);padding:14px 32px;}
+  .logo{font-weight:600;font-size:1.65rem;letter-spacing:-.01em;color:var(--berry);}
+  .logo .dot{color:var(--papaya);}
+  .nav-links{display:flex;gap:34px;align-items:center;}
+  .nav-links a{color:var(--ink-soft);text-decoration:none;font-size:.92rem;font-weight:500;transition:color .2s;}
+  .nav-links a:hover{color:var(--green);}
+  .nav-cta{background:var(--green);color:var(--ivory)!important;padding:10px 22px;border-radius:100px;font-size:.9rem;font-weight:600;transition:background .25s,transform .2s;}
+  .nav-cta:hover{background:var(--green-deep);transform:translateY(-1px);}
+  @media(max-width:760px){.nav-links a:not(.nav-cta){display:none;}}
+
+  header{padding:190px 0 90px;position:relative;}
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:10px;font-size:.82rem;font-weight:600;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:30px;
+    opacity:0;animation:rise .8s .1s forwards;
+  }
+  .hero-eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--papaya);
+    box-shadow:0 0 0 0 rgba(189,104,9,.55);animation:pulse 2.5s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(189,104,9,.55)}70%{box-shadow:0 0 0 12px rgba(189,104,9,0)}100%{box-shadow:0 0 0 0 rgba(189,104,9,0)}}
+  h1.hero{font-weight:500;font-size:clamp(3rem,8vw,6rem);line-height:1.0;letter-spacing:-.02em;max-width:14ch;margin-bottom:34px;color:var(--ink);}
+  h1.hero em{font-style:italic;color:var(--berry);}
+  .hero-lines span{display:block;opacity:0;animation:rise .9s forwards;}
+  .hero-lines span:nth-child(1){animation-delay:.2s}
+  .hero-lines span:nth-child(2){animation-delay:.32s}
+  .hero-lines span:nth-child(3){animation-delay:.44s}
+  .hero-sub{font-size:1.26rem;color:var(--ink-soft);max-width:54ch;line-height:1.5;margin-bottom:40px;opacity:0;animation:rise .9s .6s forwards;}
+  .hero-actions{display:flex;gap:18px;flex-wrap:wrap;opacity:0;animation:rise .9s .75s forwards;}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;border-radius:100px;font-weight:600;font-size:1rem;text-decoration:none;cursor:pointer;transition:transform .2s,background .25s,box-shadow .25s,border-color .25s,color .25s;}
+  .btn-primary{background:var(--berry);color:var(--ivory);box-shadow:0 12px 30px -10px rgba(123,45,94,.5);}
+  .btn-primary:hover{background:var(--berry-bright);transform:translateY(-2px);box-shadow:0 16px 36px -10px rgba(123,45,94,.6);}
+  .btn-ghost{color:var(--ink);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--green);color:var(--green);transform:translateY(-2px);}
+  .btn .arrow{transition:transform .25s;}
+  .btn:hover .arrow{transform:translateX(4px);}
+  @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+  .hero-mark{position:absolute;right:-30px;top:130px;font-size:28rem;line-height:1;color:var(--papaya);opacity:.12;pointer-events:none;font-weight:600;user-select:none;}
+  @media(max-width:900px){.hero-mark{display:none;}}
+
+  .tiles{display:flex;gap:18px;margin-top:64px;flex-wrap:wrap;opacity:0;animation:rise .9s .9s forwards;}
+  .tile{display:flex;flex-direction:column;gap:14px;align-items:flex-start;}
+  .tile .chip{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;transition:transform .3s;box-shadow:0 10px 24px -14px var(--shadow);}
+  .tile:hover .chip{transform:translateY(-5px) rotate(-3deg);}
+  .tile .chip svg{width:30px;height:30px;stroke:var(--ivory);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  .tile .lbl{font-size:.82rem;font-weight:600;color:var(--ink-soft);}
+  .chip.c-green{background:var(--green);}
+  .chip.c-berry{background:var(--berry);}
+  .chip.c-papaya{background:var(--papaya);}
+  .chip.c-rose{background:var(--rose);}
+
+  .belief{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 0;overflow:hidden;white-space:nowrap;background:var(--green);}
+  .belief-track{display:inline-block;animation:marquee 34s linear infinite;}
+  .belief-track span{font-style:italic;font-size:1.45rem;color:var(--ivory);margin:0 36px;}
+  .belief-track .star{color:var(--papaya);font-style:normal;}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  section{padding:115px 0;}
+  .section-label{font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--papaya-deep);margin-bottom:18px;}
+  h2{font-weight:500;font-size:clamp(2.1rem,4.5vw,3.5rem);line-height:1.08;letter-spacing:-.015em;max-width:18ch;margin-bottom:24px;color:var(--ink);}
+  h2 em{font-style:italic;color:var(--berry);}
+  .lead{font-size:1.18rem;color:var(--ink-soft);max-width:58ch;line-height:1.55;}
+
+  .mission{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+  @media(max-width:840px){.mission{grid-template-columns:1fr;gap:40px;}}
+  .mission-quote{font-size:1.65rem;line-height:1.42;font-weight:400;border-left:3px solid var(--papaya);padding-left:28px;color:var(--ink);}
+  .mission-quote strong{color:var(--berry);font-weight:600;}
+  .gap-viz{display:flex;flex-direction:column;gap:16px;}
+  .gap-row{background:var(--ivory-deep);border:1px solid var(--line);border-radius:16px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;border-left-width:4px;transition:transform .3s;}
+  .gap-row:hover{transform:translateX(6px);}
+  .gap-row:nth-child(1){border-left-color:var(--green);}
+  .gap-row:nth-child(2){border-left-color:var(--berry);}
+  .gap-row:nth-child(3){border-left-color:var(--papaya);}
+  .gap-row:nth-child(4){border-left-color:var(--rose);}
+  .gap-row .who{font-weight:600;color:var(--ink);}
+  .gap-row .what{font-size:.9rem;font-weight:600;color:var(--ink-soft);}
+
+  .pillars-intro{text-align:center;max-width:640px;margin:0 auto 64px;}
+  .pillars-intro h2{margin:0 auto 20px;}
+  .pillars-intro .lead{margin:0 auto;}
+  .pillar{border-top:1px solid var(--line);padding:54px 0;display:grid;grid-template-columns:.85fr 2fr;gap:60px;}
+  .pillar.p-berry{--pa:var(--berry);--pad:var(--berry-deep);}
+  .pillar.p-green{--pa:var(--green);--pad:var(--green-deep);}
+  .pillar.p-papaya{--pa:var(--papaya);--pad:var(--papaya-deep);}
+  @media(max-width:840px){.pillar{grid-template-columns:1fr;gap:24px;padding:42px 0;}}
+  .pillar-head{position:sticky;top:120px;align-self:start;}
+  .pillar-num{font-size:1rem;color:var(--pad);font-weight:600;display:block;margin-bottom:14px;letter-spacing:.04em;}
+  .pillar-head h3{font-weight:500;font-size:2rem;line-height:1.1;letter-spacing:-.015em;margin-bottom:14px;color:var(--ink);}
+  .pillar-head p{font-size:1rem;color:var(--ink-soft);max-width:34ch;}
+  .pillar-cards{display:flex;flex-direction:column;gap:20px;}
+  .card{background:var(--ivory-deep);border:1px solid var(--line);border-radius:20px;padding:32px 34px;transition:transform .35s cubic-bezier(.2,.7,.3,1),box-shadow .35s,border-color .35s;position:relative;overflow:hidden;}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pa);transform:scaleY(0);transform-origin:top;transition:transform .4s;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 22px 44px -24px var(--shadow);border-color:transparent;}
+  .card:hover::before{transform:scaleY(1);}
+  .card h4{font-weight:600;font-size:1.32rem;margin-bottom:10px;letter-spacing:-.01em;color:var(--ink);}
+  .card p{color:var(--ink-soft);font-size:1.01rem;line-height:1.55;}
+  .card .tag{display:inline-block;font-size:.73rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pad);margin-bottom:16px;}
+
+
+
+  .work{background:var(--ivory-deep);}
+  .work-head{max-width:720px;margin-bottom:48px;}
+  .work-card{background:var(--ivory);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 28px 60px -34px var(--shadow);}
+  .video-frame{position:relative;width:100%;padding-bottom:56.25%;height:0;border-radius:14px;overflow:hidden;background:var(--oxblood);}
+  .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .work-meta{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center;padding:22px 14px 8px;}
+  .work-meta .title{font-family:'Fraunces',serif;font-weight:600;font-size:1.3rem;color:var(--ink);letter-spacing:-.01em;}
+  .work-tags{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;}
+  .work-tags span{font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:100px;}
+  .wt-green{background:rgba(47,71,49,.12);color:var(--green-deep);}
+  .wt-berry{background:rgba(123,45,94,.12);color:var(--berry-deep);}
+  .wt-papaya{background:rgba(189,104,9,.14);color:var(--papaya-deep);}
+  .work-note{font-size:1rem;color:var(--ink-soft);line-height:1.55;padding:0 14px 10px;max-width:64ch;}
+  .cta{text-align:center;padding:130px 0 110px;}
+  .cta h2{margin:0 auto 24px;font-size:clamp(2.4rem,6vw,4.4rem);}
+  .cta .lead{margin:0 auto 40px;}
+  .cta-actions{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;}
+
+  footer{border-top:1px solid var(--line);padding:58px 0 48px;}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:30px;}
+  .foot-logo{font-size:2.4rem;font-weight:600;color:var(--berry);}
+  .foot-logo .dot{color:var(--papaya);}
+  .foot-tag{color:var(--ink-soft);max-width:28ch;margin-top:8px;font-size:.96rem;}
+  .foot-meta{text-align:right;font-size:.88rem;color:var(--ink-soft);}
+  .foot-meta a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--papaya);}
+
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo">handled<span class="dot">.</span></div>
+  <div class="nav-links">
+    <a href="#what">What we do</a>
+    <a href="#work">Our work</a>
+    <a href="#contact" class="nav-cta">Get handled</a>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="hero-mark">.</div>
+    <div class="hero-eyebrow"><span class="pulse"></span>AI for the rest of us</div>
+    <h1 class="hero display hero-lines">
+      <span>The AI economy</span>
+      <span>shouldn't have a</span>
+      <span><em>velvet rope.</em></span>
+    </h1>
+    <p class="hero-sub">The people who can build AI agents are pulling ahead. Everyone else is being told to "just use AI" with no real support. handled. closes that gap &mdash; we do it for you, build it with you, and teach you to build it yourself.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-primary">Let's get you started <span class="arrow">&rarr;</span></a>
+      <a href="#what" class="btn btn-ghost">See how it works</a>
+    </div>
+
+    <div class="tiles">
+      <div class="tile">
+        <div class="chip c-green"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></div>
+        <span class="lbl">Social</span>
+      </div>
+      <div class="tile">
+        <div class="chip c-berry"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/></svg></div>
+        <span class="lbl">Content</span>
+      </div>
+      <div class="tile">
+        <div class="chip c-papaya"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+        <span class="lbl">Inbox</span>
+      </div>
+      <div class="tile">
+        <div class="chip c-rose"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div>
+        <span class="lbl">Schedule</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="belief">
+  <div class="belief-track">
+    <span>You don't have to be technical.</span><span class="star">&#10022;</span>
+    <span>You just have to be ready.</span><span class="star">&#10022;</span>
+    <span>Nobody gets left behind.</span><span class="star">&#10022;</span>
+    <span>Access isn't a privilege.</span><span class="star">&#10022;</span>
+    <span>You don't have to be technical.</span><span class="star">&#10022;</span>
+    <span>You just have to be ready.</span><span class="star">&#10022;</span>
+    <span>Nobody gets left behind.</span><span class="star">&#10022;</span>
+    <span>Access isn't a privilege.</span><span class="star">&#10022;</span>
+  </div>
+</div>
+
+<section id="mission">
+  <div class="wrap mission">
+    <div class="reveal">
+      <div class="section-label">The belief</div>
+      <div class="mission-quote">We're in the earliest days of an agent economy &mdash; and it's already becoming unequal. <strong>handled. exists to close that gap.</strong> Not someday. Now.</div>
+    </div>
+    <div class="gap-viz reveal">
+      <div class="gap-row"><span class="who">Busy parents</span><span class="what">no time, no tech</span></div>
+      <div class="gap-row"><span class="who">Small business owners</span><span class="what">no budget, no team</span></div>
+      <div class="gap-row"><span class="who">Independent pros</span><span class="what">no tools for their niche</span></div>
+      <div class="gap-row"><span class="who">AI-curious teams</span><span class="what">awareness, not skill</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="what">
+  <div class="wrap">
+    <div class="pillars-intro reveal">
+      <div class="section-label">What we do</div>
+      <h2>Three ways in. <em>Meeting you</em> exactly where you are.</h2>
+      <p class="lead">Access first. Capability second. Independence third. Wherever you're starting, there's a door.</p>
+    </div>
+
+    <div class="pillar p-berry reveal">
+      <div class="pillar-head">
+        <span class="pillar-num">01 / Done for you</span>
+        <h3>I'll handle it.</h3>
+        <p>You get AI-powered outcomes without ever needing to understand or touch the technology.</p>
+      </div>
+      <div class="pillar-cards">
+        <div class="card">
+          <span class="tag">Virtual Assistant for Parents</span>
+          <h4>An executive assistant, powered by agents you'll never see.</h4>
+          <p>Time-strapped parents get real digital help &mdash; inbox, scheduling, research, the endless admin &mdash; handled in the background by an agent stack you never have to manage.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Marketing &amp; Social Media VA</span>
+          <h4>Agency-quality presence without the agency.</h4>
+          <p>Small business owners get consistent, strategic marketing and social media &mdash; no hiring, no learning new tools, no monthly retainer that breaks the bank.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Personal Style Guide Service</span>
+          <h4>A personal stylist, finally within reach.</h4>
+          <p>Personalized outfit recommendations with direct purchase links &mdash; the kind of styling experience that used to be reserved for high earners, opened up to everyone.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pillar p-green reveal">
+      <div class="pillar-head">
+        <span class="pillar-num">02 / Built with you</span>
+        <h3>I'll build your agents.</h3>
+        <p>You get your own AI workflows &mdash; ready to run &mdash; without needing to know how to build them.</p>
+      </div>
+      <div class="pillar-cards">
+        <div class="card">
+          <span class="tag">AI Workflow Consulting</span>
+          <h4>A custom agent stack, built for your exact operations.</h4>
+          <p>We design and build the agent infrastructure your business actually needs, then hand it over ready to run. No coding. No technical fluency required. Just a system that works &mdash; and that you own.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Vertical Agent Products</span>
+          <h4>Industry-specific agents, no setup required.</h4>
+          <p>Productized tools built for a profession &mdash; like our styling agent for stylists. One operator can suddenly serve 10x the clients, with zero technical lift on their end.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pillar p-papaya reveal">
+      <div class="pillar-head">
+        <span class="pillar-num">03 / Taught to you</span>
+        <h3>I'll teach you to build.</h3>
+        <p>You gain the skills to build and run your own agents &mdash; at your own pace, from wherever you start.</p>
+      </div>
+      <div class="pillar-cards">
+        <div class="card">
+          <span class="tag">AI Training &mdash; Teams &amp; Companies</span>
+          <h4>From AI-curious to AI-capable.</h4>
+          <p>Employees who've never touched AI leave able to build and use workflows in their own role &mdash; taught from real, deployed systems, not abstract theory.</p>
+        </div>
+        <div class="card">
+          <span class="tag">AI Coaching &mdash; 1:1</span>
+          <h4>A personalized path, built around you.</h4>
+          <p>Individuals get guided from overwhelmed to building their own agent stacks &mdash; meeting them exactly where they are, moving exactly as fast as they're ready to.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="work">
+  <div class="wrap">
+    <div class="work-head reveal">
+      <div class="section-label">Our work</div>
+      <h2>Proof, not <em>promises.</em></h2>
+      <p class="lead">A look at handled. in action &mdash; real agent-powered builds, made with the same tools and approach we bring to every client.</p>
+    </div>
+    <div class="work-card reveal">
+      <div class="video-frame">
+        <iframe src="https://app.vidcast.io/share/embed/9de187d0-3376-46c6-b372-b33d6f6eec73" title="Copy of Cisco Tech4Good Hackathon - OpenEarth (Airtable, AI, Vibe Coding)" loading="lazy" allow="fullscreen *;autoplay *;clipboard-write *;"></iframe>
+      </div>
+      <div class="work-meta">
+        <span class="title">OpenEarth &mdash; Cisco Tech4Good Hackathon</span>
+        <div class="work-tags">
+          <span class="wt-green">Airtable</span>
+          <span class="wt-berry">AI agents</span>
+          <span class="wt-papaya">Vibe coding</span>
+        </div>
+      </div>
+      <p class="work-note">A working prototype that links climate actions to their real-world co-benefits &mdash; jobs, housing, and more &mdash; built with Airtable, AI field agents, and rapid prototyping. Exactly the kind of agentified build handled. delivers for clients.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap" id="contact">
+    <div class="reveal">
+      <div class="section-label" style="text-align:center;">Whatever you're drowning in</div>
+      <h2 class="display">Consider it <em>handled.</em></h2>
+      <p class="lead">Tell us where you're stuck. We'll meet you there &mdash; whether that means doing it for you, building it with you, or teaching you to build it yourself.</p>
+      <div class="cta-actions">
+        <a href="mailto:hello@handled.co" class="btn btn-primary">Start the conversation <span class="arrow">&rarr;</span></a>
+        <a href="#what" class="btn btn-ghost">Explore what we do</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <div class="foot-logo">handled<span class="dot">.</span></div>
+      <p class="foot-tag">Building the on-ramp to the agent economy &mdash; and making sure no one gets left behind.</p>
+    </div>
+    <div class="foot-meta">
+      <p>AI for the rest of us.</p>
+      <p style="margin-top:10px;"><a href="mailto:hello@handled.co">hello@handled.co</a></p>
+      <p style="margin-top:18px;opacity:.55;">&copy; 2026 handled. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav=document.getElementById('nav');
+  window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>30);});
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>

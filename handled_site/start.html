@@ -282,7 +282,7 @@
 </div>
 
 <script>
-  const form = document.getElementById('intakeForm');
+  const form = document.getElementById('intake-form');  // was 'intakeForm'
   const success = document.getElementById('success');
   const intro = document.getElementById('intro');
 
@@ -327,7 +327,6 @@
 
     const data = new FormData(form);
 
-    // Collect all services checkboxes if present
     const services = [...form.querySelectorAll('input[name="services"]:checked')]
       .map(el => el.value).join(', ');
 
@@ -335,10 +334,10 @@
       name:      data.get('name'),
       email:     data.get('email'),
       phone:     data.get('phone') || '',
-      whatYouDo: data.get('whatYouDo') || '',
+      whatYouDo: data.get('role') || '',        // input uses name="role"
       describes: data.get('describes') || '',
       path:      data.get('path') || '',
-      services:  services || data.get('services') || '',
+      services:  services || '',
       problem:   data.get('problem') || '',
       tried:     data.get('tried') || '',
       timeline:  data.get('timeline') || '',

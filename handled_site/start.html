@@ -290,7 +290,7 @@
     const msg = form.querySelector('.err-msg[data-for="' + name + '"]');
     const field = form.querySelector('[name="' + name + '"]');
     if (msg) msg.classList.toggle('show', on);
-    if (field && (field.type === 'text' || field.type === 'email' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
+    if (field && (field.type === 'text' || field.type === 'email' || field.type === 'tel' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
       field.classList.toggle('err', on);
     }
   }
@@ -327,13 +327,24 @@
 
     const data = new FormData(form);
 
-    // ── Collect form values ──────────────────────────────────────────
+    // Collect all services checkboxes if present
+    const services = [...form.querySelectorAll('input[name="services"]:checked')]
+      .map(el => el.value).join(', ');
+
     const payload = {
       name:      data.get('name'),
       email:     data.get('email'),
-      describes: data.get('describes'),   // the "which best describes you" field
-      problem:   data.get('problem'),     // the "what do you need help with" field
-      path:      data.get('path'),        // I'll handle it / build / teach
+      phone:     data.get('phone') || '',
+      whatYouDo: data.get('whatYouDo') || '',
+      describes: data.get('describes') || '',
+      path:      data.get('path') || '',
+      services:  services || data.get('services') || '',
+      problem:   data.get('problem') || '',
+      tried:     data.get('tried') || '',
+      timeline:  data.get('timeline') || '',
+      budget:    data.get('budget') || '',
+      referral:  data.get('referral') || '',
+      anything:  data.get('anything') || '',
     };
 
     try {

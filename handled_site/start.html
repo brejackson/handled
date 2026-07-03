@@ -191,7 +191,7 @@
             <span class="ot"><span class="ot-title">Teach me or my team to build</span><span class="ot-desc">Training and 1:1 coaching to go from AI-curious to AI-capable.</span></span>
           </label>
           <label class="opt-card">
-            <input type="radio" name="path" value="Not sure yet">
+            <input type="radio" name="path" value="Not sure yet — help me figure it out">
             <span class="box round"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
             <span class="ot"><span class="ot-title">Not sure yet &mdash; help me figure it out</span><span class="ot-desc">Tell us the problem and we'll point you to the right starting place.</span></span>
           </label>
@@ -202,13 +202,13 @@
       <div class="field" style="margin-top:8px;">
         <label>Any specific services on your mind? <span class="opt">(optional &mdash; pick any)</span></label>
         <div class="options">
-          <label class="opt-card"><input type="checkbox" name="services" value="VA for parents"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">Virtual assistant for parents</span></span></label>
-          <label class="opt-card"><input type="checkbox" name="services" value="Marketing & social VA"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">Marketing &amp; social media assistant</span></span></label>
-          <label class="opt-card"><input type="checkbox" name="services" value="Personal style guide"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">Personal style guide service</span></span></label>
+          <label class="opt-card"><input type="checkbox" name="services" value="Virtual assistant for parents"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">Virtual assistant for parents</span></span></label>
+          <label class="opt-card"><input type="checkbox" name="services" value="Marketing & social media assistant"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">Marketing &amp; social media assistant</span></span></label>
+          <label class="opt-card"><input type="checkbox" name="services" value="Personal style guide service"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">Personal style guide service</span></span></label>
           <label class="opt-card"><input type="checkbox" name="services" value="AI workflow consulting"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">AI workflow consulting</span></span></label>
-          <label class="opt-card"><input type="checkbox" name="services" value="Vertical agent product"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">A custom agent tool for my industry</span></span></label>
-          <label class="opt-card"><input type="checkbox" name="services" value="AI training"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">AI training for my team</span></span></label>
-          <label class="opt-card"><input type="checkbox" name="services" value="AI coaching"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">1:1 AI coaching</span></span></label>
+          <label class="opt-card"><input type="checkbox" name="services" value="A custom agent tool for my industry"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">A custom agent tool for my industry</span></span></label>
+          <label class="opt-card"><input type="checkbox" name="services" value="AI training for my team"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">AI training for my team</span></span></label>
+          <label class="opt-card"><input type="checkbox" name="services" value="1:1 AI coaching"><span class="box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="ot"><span class="ot-title">1:1 AI coaching</span></span></label>
         </div>
       </div>
     </div>
@@ -328,7 +328,7 @@
     const data = new FormData(form);
 
     const services = [...form.querySelectorAll('input[name="services"]:checked')]
-      .map(el => el.value).join(', ');
+      .map(el => el.value);   // array of full labels
 
     const payload = {
       name:      data.get('name'),
@@ -337,7 +337,7 @@
       whatYouDo: data.get('role') || '',        // input uses name="role"
       describes: data.get('describes') || '',
       path:      data.get('path') || '',
-      services:  services || '',
+      services:  services,
       problem:   data.get('problem') || '',
       tried:     data.get('tried') || '',
       timeline:  data.get('timeline') || '',

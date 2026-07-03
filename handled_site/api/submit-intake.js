@@ -26,7 +26,7 @@ export default async function handler(req, res) {
             "What do you do":                               whatYouDo || "",
             "Which best describes you?":                    describes || "",
             "What you're looking for?":                     path || "",
-            "Any specific services on your mind?":          services || "",
+            "Any specific services on your mind?":            services ? services.split(', ') : [],
             "What's the main thing you want off your plate?": problem || "",
             "What have you tried so far?":                  tried || "",
             "Timeline":                                     timeline || "",

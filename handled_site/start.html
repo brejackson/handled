@@ -123,7 +123,7 @@
     <p>A few quick questions so we can figure out the best way to help &mdash; whether that's handling it for you, building you your own agents, or teaching you to build. No pressure, no jargon.</p>
   </div>
 
-  <form id="intakeForm" novalidate>
+  <form id="intake-form" novalidate>
 
     <!-- ABOUT YOU -->
     <div class="fieldset">
@@ -282,85 +282,84 @@
 </div>
 
 <script>
-  // ====================================================================
-  //  WHERE SUBMISSIONS GO
-  //  Replace the value below with your Formspree endpoint, e.g.
-  //  "https://formspree.io/f/abcdwxyz"  (free at formspree.io)
-  //  Leave it as-is to preview the form without sending anywhere.
-  // ====================================================================
-  const FORM_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
-
   const form = document.getElementById('intakeForm');
   const success = document.getElementById('success');
   const intro = document.getElementById('intro');
 
-  function showError(name, on){
-    const msg = form.querySelector('.err-msg[data-for="'+name+'"]');
-    const field = form.querySelector('[name="'+name+'"]');
-    if(msg) msg.classList.toggle('show', on);
-    if(field && field.tagName !== 'undefined' && (field.type==='text'||field.type==='email'||field.tagName==='SELECT'||field.tagName==='TEXTAREA')){
+  function showError(name, on) {
+    const msg = form.querySelector('.err-msg[data-for="' + name + '"]');
+    const field = form.querySelector('[name="' + name + '"]');
+    if (msg) msg.classList.toggle('show', on);
+    if (field && (field.type === 'text' || field.type === 'email' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
       field.classList.toggle('err', on);
     }
   }
 
-  function validate(){
+  function validate() {
     let ok = true;
-    // required text/email/select/textarea
-    ['name','email','describes','problem'].forEach(n=>{
-      const el = form.querySelector('[name="'+n+'"]');
+    ['name', 'email', 'describes', 'problem'].forEach(n => {
+      const el = form.querySelector('[name="' + n + '"]');
       let bad = !el.value.trim();
-      if(n==='email' && el.value.trim()){ bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()); }
+      if (n === 'email' && el.value.trim()) {
+        bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+      }
       showError(n, bad);
-      if(bad) ok = false;
+      if (bad) ok = false;
     });
-    // required radio (path)
     const pathChecked = form.querySelector('input[name="path"]:checked');
     showError('path', !pathChecked);
-    if(!pathChecked) ok = false;
+    if (!pathChecked) ok = false;
     return ok;
   }
 
-  // clear errors as the user fixes them
-  form.addEventListener('input', e=>{
+  form.addEventListener('input', e => {
     const n = e.target.name;
-    if(['name','email','describes','problem','path'].includes(n)) showError(n, false);
+    if (['name', 'email', 'describes', 'problem', 'path'].includes(n)) showError(n, false);
   });
 
-  form.addEventListener('submit', async (e)=>{
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if(!validate()){
+    if (!validate()) {
       const firstErr = form.querySelector('.err, .err-msg.show');
-      if(firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
     const data = new FormData(form);
 
-    // If the endpoint hasn't been configured yet, just show the success
-    // state so you (or a client) can preview the full flow.
-    if(FORM_ENDPOINT.includes('YOUR_FORM_ID')){
-      finish();
-      return;
-    }
+    // ── Collect form values ──────────────────────────────────────────
+    const payload = {
+      name:      data.get('name'),
+      email:     data.get('email'),
+      describes: data.get('describes'),   // the "which best describes you" field
+      problem:   data.get('problem'),     // the "what do you need help with" field
+      path:      data.get('path'),        // I'll handle it / build / teach
+    };
 
-    try{
-      const res = await fetch(FORM_ENDPOINT, {
-        method:'POST',
-        body:data,
-        headers:{'Accept':'application/json'}
+    try {
+      const res = await fetch('/api/submit-intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-      if(res.ok){ finish(); }
-      else { alert("Something went wrong sending the form. Please email us directly while we look into it."); }
-    }catch(err){
+
+      const json = await res.json();
+
+      if (res.ok) {
+        finish();
+      } else {
+        alert(json.error || "Something went wrong. Please email hello@handled-studio.com while we look into it.");
+      }
+    } catch (err) {
       alert("Couldn't reach the server. Please check your connection and try again.");
     }
   });
 
-  function finish(){
+  function finish() {
     form.style.display = 'none';
     intro.style.display = 'none';
     success.classList.add('show');
-    window.scrollTo({top:0, behavior:'smooth'});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
 

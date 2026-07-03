@@ -3,11 +3,19 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { name, email, phone, whatYouDo, describes, path, services, problem, tried, timeline, budget, referral, anything } = req.body;
+  const {
+    name, email, phone, whatYouDo, describes, path,
+    services, problem, tried, timeline, budget, referral, anything,
+  } = req.body;
 
   if (!name || !email) {
     return res.status(400).json({ error: "Name and email are required." });
   }
+
+  // services arrives as an array of labels; guard against a string just in case
+  const serviceList = Array.isArray(services)
+    ? services
+    : (services ? String(services).split(", ") : []);
 
   try {
     const response = await fetch(
@@ -19,22 +27,23 @@ export default async function handler(req, res) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          typecast: true, // lets Airtable match/create select options from label strings
           fields: {
-            "Name":                                         name,
-            "Email":                                        email,
-            "Phone":                                        phone || "",
-            "What do you do":                               whatYouDo || "",
-            "Which best describes you?":                    describes || "",
-            "What you're looking for?":                     path || "",
-            "Any specific services on your mind?":            services ? services.split(', ') : [],
+            "Name":                                           name,
+            "Email":                                          email,
+            "Phone":                                          phone || "",
+            "What do you do":                                 whatYouDo || "",
+            "Which best describes you?":                      describes || "",
+            "What you're looking for?":                       path || "",
+            "Any specific services on your mind?":            serviceList,
             "What's the main thing you want off your plate?": problem || "",
-            "What have you tried so far?":                  tried || "",
-            "Timeline":                                     timeline || "",
-            "Budget range":                                 budget || "",
-            "How did you hear about handled.?":             referral || "",
-            "Anything else we should know?":                anything || "",
-            "Submitted At":                                 new Date().toISOString(),
-            "Status":                                       "New",
+            "What have you tried so far?":                    tried || "",
+            "Timeline":                                       timeline || "",
+            "Budget range":                                   budget || "",
+            "How did you hear about handled.?":               referral || "",
+            "Anything else we should know?":                  anything || "",
+            "Submitted At":                                   new Date().toISOString(),
+            "Status":                                         "New",
           },
         }),
       }
